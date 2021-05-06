@@ -1,10 +1,11 @@
 package helpers
 
 type UserInfo struct {
-	CurrentPrayer string // the prayer user is reading currently
-	PrayerPart    int    // part of prayer being read
-	PrayerCount   int    // num of prayer
-	UserState     string //
+	CurrentPrayer  string // the prayer user is reading currently
+	PrayerPart     int    // part of prayer being read
+	PrayerCount    int    // num of prayer
+	UserState      string //
+	PrayersInState int
 }
 
 const (
@@ -18,16 +19,17 @@ type UsersMap map[int]UserInfo
 
 func (um *UsersMap) AddUser(userID int) {
 	(*um)[userID] = UserInfo{
-		CurrentPrayer: "",
-		PrayerPart:    1,
-		PrayerCount:   1,
-		UserState: "",
+		CurrentPrayer:  "",
+		PrayerPart:     1,
+		PrayerCount:    1,
+		UserState:      "",
+		PrayersInState: 1,
 	}
 }
 
-func (um *UsersMap) UpdatePrayer(userID int, prayerName string) {
+func (um *UsersMap) UpdatePrayer(userID int) {
 	userInfo := (*um)[userID]
-	userInfo.CurrentPrayer = prayerName
+	userInfo.CurrentPrayer = getPrayerName(userInfo)
 	(*um)[userID] = userInfo
 }
 
@@ -51,16 +53,27 @@ func (um *UsersMap) GetUserInfo(userID int) UserInfo {
 func (um *UsersMap) UpdateState(userID int, state string) {
 	userInfo := (*um)[userID]
 	userInfo.UserState = state
+	var prayersInState int
+	switch state {
+	case FifteenMins, ThirtyMins:
+		prayersInState = 3
+	case OneHour:
+		prayersInState = 4
+	default:
+		prayersInState = 1
+	}
+	userInfo.PrayersInState = prayersInState
 	(*um)[userID] = userInfo
 }
 
 func (um *UsersMap) FlushUserInfo(userID int) {
 	userInfo := (*um)[userID]
 	userInfo = UserInfo{
-		CurrentPrayer: "",
-		PrayerPart:    1,
-		PrayerCount:   1,
-		UserState: "",
+		CurrentPrayer:  "",
+		PrayerPart:     1,
+		PrayerCount:    1,
+		UserState:      "",
+		PrayersInState: 1,
 	}
 
 	(*um)[userID] = userInfo

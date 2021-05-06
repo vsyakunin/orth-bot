@@ -12,7 +12,7 @@ const (
 	af = "Akafist"
 )
 
-func GetPrayer(info UserInfo) (text string, isLastPart bool) {
+func GetPrayerPart(info UserInfo) (text string, isLastPart bool) {
 	prayer, err := getPrayerByName(info.CurrentPrayer)
 	if err != nil {
 		return "", true
@@ -26,14 +26,14 @@ func GetPrayer(info UserInfo) (text string, isLastPart bool) {
 	return prayerPart, isLastPart
 }
 
-func Get5MinPrayerName() string {
+func get5MinPrayerName() string {
 	in := []string{me, ah, nb}
 	randomIndex := rand.Intn(len(in))
 	return in[randomIndex]
 }
 
-func Get15MinPrayerName(userInfo UserInfo) string {
-	switch userInfo.PrayerCount {
+func get15MinPrayerName(prayerCount int) string {
+	switch prayerCount {
 	case 1:
 		return nb
 	case 2:
@@ -43,8 +43,8 @@ func Get15MinPrayerName(userInfo UserInfo) string {
 	}
 }
 
-func Get30MinPrayerName(userInfo UserInfo) string {
-	switch userInfo.PrayerCount {
+func get30MinPrayerName(prayerCount int) string {
+	switch prayerCount {
 	case 1:
 		return nb
 	case 2:
@@ -54,8 +54,8 @@ func Get30MinPrayerName(userInfo UserInfo) string {
 	}
 }
 
-func Get1hPrayerName(userInfo UserInfo) string {
-	switch userInfo.PrayerCount {
+func get1hPrayerName(prayerCount int) string {
+	switch prayerCount {
 	case 1:
 		return nb
 	case 2:
@@ -64,5 +64,20 @@ func Get1hPrayerName(userInfo UserInfo) string {
 		return af
 	default:
 		return kp
+	}
+}
+
+func getPrayerName(userInfo UserInfo) string {
+	switch userInfo.UserState {
+	case FiveMins:
+		return get5MinPrayerName()
+	case FifteenMins:
+		return get15MinPrayerName(userInfo.PrayerCount)
+	case ThirtyMins:
+		return get30MinPrayerName(userInfo.PrayerCount)
+	case OneHour:
+		return get1hPrayerName(userInfo.PrayerCount)
+	default:
+		return ""
 	}
 }

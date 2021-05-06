@@ -25,7 +25,6 @@ func main() {
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		if _, ok := usersMap[m.Sender.ID]; !ok {
 			usersMap.AddUser(m.Sender.ID)
-			log.Println(usersMap)
 			log.Printf("added new user with ID %v", m.Sender.ID)
 		}
 		usersMap.FlushUserInfo(m.Sender.ID)
@@ -69,8 +68,8 @@ func main() {
 		}
 
 		usersMap.UpdateState(c.Sender.ID, helpers.FiveMins)
-		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get5MinPrayerName())
-		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		usersMap.UpdatePrayer(c.Sender.ID)
+		text, _ := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
@@ -88,8 +87,8 @@ func main() {
 		}
 
 		usersMap.UpdateState(c.Sender.ID, helpers.FifteenMins)
-		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get15MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		usersMap.UpdatePrayer(c.Sender.ID)
+		text, _ := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
@@ -107,8 +106,8 @@ func main() {
 		}
 
 		usersMap.UpdateState(c.Sender.ID, helpers.ThirtyMins)
-		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get30MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		usersMap.UpdatePrayer(c.Sender.ID)
+		text, _ := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
@@ -126,8 +125,8 @@ func main() {
 		}
 
 		usersMap.UpdateState(c.Sender.ID, helpers.OneHour)
-		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get1hPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		usersMap.UpdatePrayer(c.Sender.ID)
+		text, _ := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
@@ -145,16 +144,9 @@ func main() {
 		}
 
 		usersMap.UpdatePrayerCount(c.Sender.ID)
-		userInfo := usersMap.GetUserInfo(c.Sender.ID)
-		switch userInfo.UserState {
-		case helpers.FifteenMins:
-			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get15MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		case helpers.ThirtyMins:
-			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get30MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		case helpers.OneHour:
-			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get1hPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
-		}
-		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		usersMap.UpdatePrayer(c.Sender.ID)
+
+		text, _ := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
@@ -171,32 +163,19 @@ func main() {
 			log.Println(err.Error())
 		}
 
-		text, isLastPart := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		text, isLastPart := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 		if !isLastPart {
 			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 				helpers.InlineBtnNextPart), tb.ModeHTML)
 		} else {
 			userInfo := usersMap.GetUserInfo(c.Sender.ID)
-			switch userInfo.UserState {
-			case helpers.FiveMins:
+			if userInfo.UserState == helpers.FiveMins ||
+				userInfo.PrayerCount == userInfo.PrayersInState {
 				_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 					helpers.InlineBtnAmen), tb.ModeHTML)
-			case helpers.FifteenMins, helpers.ThirtyMins:
-				if userInfo.PrayerCount > 2 {
-					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
-						helpers.InlineBtnAmen), tb.ModeHTML)
-				} else {
-					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
-						helpers.InlineBtnNextPrayer), tb.ModeHTML)
-				}
-			case helpers.OneHour:
-				if userInfo.PrayerCount > 3 {
-					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
-						helpers.InlineBtnAmen), tb.ModeHTML)
-				} else {
-					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
-						helpers.InlineBtnNextPrayer), tb.ModeHTML)
-				}
+			} else {
+				_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+					helpers.InlineBtnNextPrayer), tb.ModeHTML)
 			}
 		}
 

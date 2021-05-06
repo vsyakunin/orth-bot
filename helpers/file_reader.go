@@ -14,7 +14,6 @@ func getPrayerByName(prayerName string) (Prayer, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Successfully Opened prayers.json")
 	defer jsonFile.Close()
 
 	byteValue, err := ioutil.ReadAll(jsonFile)
