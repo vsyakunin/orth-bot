@@ -2,6 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46edbf8f-46ac-4d83-953d-ffe50320d156" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/helpers/buttons.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/helpers/file_reader.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/helpers/prayers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/helpers/texts.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/helpers/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/prayers.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
@@ -13,6 +19,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Go Application" />
         <option value="Go File" />
       </list>
     </option>
@@ -38,6 +45,11 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/helpers" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">

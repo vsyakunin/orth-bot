@@ -4,41 +4,10 @@ import (
 	"log"
 	"time"
 
+	"orth-bot/helpers"
+
 	tb "gopkg.in/tucnak/telebot.v2"
 )
-
-var (
-	inlineBtnProceedStart = tb.InlineButton{
-		Unique: "proceedStart",
-		Text:   "Дальше",
-	}
-
-	inlineBtnLetsStart = tb.InlineButton{
-		Unique: "letsStart",
-		Text:   "Начнём",
-	}
-
-	inlineBtn5min = tb.InlineButton{
-		Unique: "btn5min",
-		Text:   "5 минут",
-	}
-
-	inlineBtn15min = tb.InlineButton{
-		Unique: "btn15min",
-		Text:   "15 минут",
-	}
-
-	inlineBtn30min = tb.InlineButton{
-		Unique: "btn30min",
-		Text:   "30 минут",
-	}
-
-	inlineBtn1h = tb.InlineButton{
-		Unique: "btn1h",
-		Text:   "Час и более",
-	}
-)
-
 
 func main() {
 	b, err := tb.NewBot(tb.Settings{
@@ -51,51 +20,95 @@ func main() {
 		return
 	}
 
-	inlineKeys := [][]tb.InlineButton{
-		{inlineBtnProceedStart},
-	}
+	usersMap := make(helpers.UsersMap)
 
 	b.Handle(tb.OnText, func(m *tb.Message) {
-		b.Send(m.Sender, `Господи, прости!
-
-Ты столкнулся с проблемой зависимости от порнографии? Твоё сердце разъедает чувство вины за совершённое блудодеяние, гложет совесть? 
-
-Этот чат-бот подскажет тебе, как правильно обратиться к Господу, чтобы он помог отпустить этот грех.`,
-			&tb.ReplyMarkup{InlineKeyboard: inlineKeys, OneTimeKeyboard: true})
+		if _, ok := usersMap[m.Sender.ID]; !ok {
+			usersMap.AddUser(m.Sender.ID)
+			log.Printf("added new user with ID %v", m.Sender.ID)
+		}
+		_, err = b.Send(m.Sender, helpers.IntroText, helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
+		if err != nil {
+			log.Println(err.Error())
+		}
 	})
 
-	inlineKeysLetsStart := [][]tb.InlineButton{
-		{inlineBtnLetsStart},
-	}
+	b.Handle(&helpers.InlineBtnProceedStart, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
 
-	b.Handle(&inlineBtnProceedStart, func(c *tb.Callback) {
-		b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
-
-		b.Send(c.Sender, `Конечно, лучше всего отправиться на исповедь в церковь. Но, если такой возможности нет, или ты пока не решаешься, пусть этот бот будет твоим помощником. 
-
-Проект разработан SMIT.Studio совместно с православным иереем Константином Мальцевым. Отец Константин лично отобрал подходящие молитвы и благословил проект.`,
-			&tb.ReplyMarkup{InlineKeyboard: inlineKeysLetsStart, OneTimeKeyboard: true})
+		_, err = b.Send(c.Sender, helpers.StartText, helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML)
+		if err != nil {
+			log.Println(err.Error())
+		}
 	})
 
-	timeKeys := [][]tb.InlineButton{
-		{inlineBtn5min},
-		{inlineBtn15min},
-		{inlineBtn30min},
-		{inlineBtn1h},
-	}
+	b.Handle(&helpers.InlineBtnLetsStart, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
 
-	b.Handle(&inlineBtnLetsStart, func(c *tb.Callback) {
-		b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		_, err = b.Send(c.Sender, helpers.QuestionText, helpers.MakeReplyMarkup(
+			helpers.InlineBtn5min, helpers.InlineBtn15min,
+			helpers.InlineBtn30min, helpers.InlineBtn1h), tb.ModeHTML)
 
-		b.Send(c.Sender, `Итак, ты поддался искушению и потратил своё время на просмотр порнографии. Возможно, ты чувствуешь вину, не знаешь, как облегчить свою душу и очистить разум? 
+		if err != nil {
+			log.Println(err.Error())
+		}
+	})
 
-Мы предлагаем тебе уделить для молитвы столько же времени, сколько ты потратил на просмотр порнографии.
+	b.Handle(&helpers.InlineBtn5min, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
 
-Просто ответь на этот простой вопрос
+		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get5MinPrayerName())
+		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
 
-Сколько времени ты потратил сейчас на порно? 
-`,
-			&tb.ReplyMarkup{InlineKeyboard: timeKeys, OneTimeKeyboard: true})
+		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			helpers.InlineBtnNextPart), tb.ModeHTML)
+
+		if err != nil {
+			log.Println(err.Error())
+		}
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtnNextPart, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		text, isLastPart := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+		if !isLastPart {
+			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+				helpers.InlineBtnNextPart), tb.ModeHTML)
+		} else {
+			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+				helpers.InlineBtnAmen), tb.ModeHTML)
+		}
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtnAmen, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		_, err = b.Send(c.Sender, helpers.IntroText, helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart))
+		if err != nil {
+			log.Println(err.Error())
+		}
 	})
 
 	b.Start()
