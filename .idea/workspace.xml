@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="46edbf8f-46ac-4d83-953d-ffe50320d156" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/helpers/buttons.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers/file_reader.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers/prayers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers/texts.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/helpers/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/prayers.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/prayers.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/prayers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/texts.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/texts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

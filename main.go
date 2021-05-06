@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"orth-bot/helpers"
+	"github.com/vsyakunin/orth-bot/helpers"
 
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -25,8 +25,10 @@ func main() {
 	b.Handle(tb.OnText, func(m *tb.Message) {
 		if _, ok := usersMap[m.Sender.ID]; !ok {
 			usersMap.AddUser(m.Sender.ID)
+			log.Println(usersMap)
 			log.Printf("added new user with ID %v", m.Sender.ID)
 		}
+		usersMap.FlushUserInfo(m.Sender.ID)
 		_, err = b.Send(m.Sender, helpers.IntroText, helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
@@ -66,7 +68,92 @@ func main() {
 			log.Println(err.Error())
 		}
 
+		usersMap.UpdateState(c.Sender.ID, helpers.FiveMins)
 		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get5MinPrayerName())
+		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+
+		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			helpers.InlineBtnNextPart), tb.ModeHTML)
+
+		if err != nil {
+			log.Println(err.Error())
+		}
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtn15min, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		usersMap.UpdateState(c.Sender.ID, helpers.FifteenMins)
+		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get15MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+
+		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			helpers.InlineBtnNextPart), tb.ModeHTML)
+
+		if err != nil {
+			log.Println(err.Error())
+		}
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtn30min, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		usersMap.UpdateState(c.Sender.ID, helpers.ThirtyMins)
+		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get30MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+
+		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			helpers.InlineBtnNextPart), tb.ModeHTML)
+
+		if err != nil {
+			log.Println(err.Error())
+		}
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtn1h, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		usersMap.UpdateState(c.Sender.ID, helpers.OneHour)
+		usersMap.UpdatePrayer(c.Sender.ID, helpers.Get1hPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
+
+		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			helpers.InlineBtnNextPart), tb.ModeHTML)
+
+		if err != nil {
+			log.Println(err.Error())
+		}
+		usersMap.UpdatePrayerPart(c.Sender.ID)
+	})
+
+	b.Handle(&helpers.InlineBtnNextPrayer, func(c *tb.Callback) {
+		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		usersMap.UpdatePrayerCount(c.Sender.ID)
+		userInfo := usersMap.GetUserInfo(c.Sender.ID)
+		switch userInfo.UserState {
+		case helpers.FifteenMins:
+			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get15MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		case helpers.ThirtyMins:
+			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get30MinPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		case helpers.OneHour:
+			usersMap.UpdatePrayer(c.Sender.ID, helpers.Get1hPrayerName(usersMap.GetUserInfo(c.Sender.ID)))
+		}
 		text, _ := helpers.GetPrayer(usersMap.GetUserInfo(c.Sender.ID))
 
 		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
@@ -89,13 +176,33 @@ func main() {
 			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 				helpers.InlineBtnNextPart), tb.ModeHTML)
 		} else {
-			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
-				helpers.InlineBtnAmen), tb.ModeHTML)
+			userInfo := usersMap.GetUserInfo(c.Sender.ID)
+			switch userInfo.UserState {
+			case helpers.FiveMins:
+				_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+					helpers.InlineBtnAmen), tb.ModeHTML)
+			case helpers.FifteenMins, helpers.ThirtyMins:
+				if userInfo.PrayerCount > 2 {
+					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+						helpers.InlineBtnAmen), tb.ModeHTML)
+				} else {
+					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+						helpers.InlineBtnNextPrayer), tb.ModeHTML)
+				}
+			case helpers.OneHour:
+				if userInfo.PrayerCount > 3 {
+					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+						helpers.InlineBtnAmen), tb.ModeHTML)
+				} else {
+					_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+						helpers.InlineBtnNextPrayer), tb.ModeHTML)
+				}
+			}
 		}
+
 		if err != nil {
 			log.Println(err.Error())
 		}
-
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
@@ -105,7 +212,9 @@ func main() {
 			log.Println(err.Error())
 		}
 
-		_, err = b.Send(c.Sender, helpers.IntroText, helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart))
+		usersMap.FlushUserInfo(c.Sender.ID)
+
+		_, err = b.Send(c.Sender, helpers.FinalText)
 		if err != nil {
 			log.Println(err.Error())
 		}
