@@ -6,7 +6,7 @@ type UserInfo struct {
 	CurrentPrayer  string // the prayer user is reading currently
 	PrayerPart     int    // part of prayer being read
 	PrayerCount    int    // num of prayer
-	UserState      State  //
+	UserState      State
 	PrayersInState int
 	LastMsg        *tb.Message
 }
