@@ -5,11 +5,11 @@ import (
 )
 
 const (
-	me = "MariyaEgipetskaya"
-	nb = "NikitaBesogon"
-	ah = "AngelHranitel"
-	kp = "KanonPokayannyi"
-	af = "Akafist"
+	me = "mariya_egipetskaya"
+	nb = "nikita_besogon"
+	ah = "angel_hranitel"
+	kp = "kanon_pokayannyi"
+	af = "akafist"
 )
 
 func GetPrayerPart(info UserInfo) (text string, isLastPart bool) {
@@ -69,13 +69,13 @@ func get1hPrayerName(prayerCount int) string {
 
 func getPrayerName(userInfo UserInfo) string {
 	switch userInfo.UserState {
-	case FiveMins:
+	case StFiveMins:
 		return get5MinPrayerName()
-	case FifteenMins:
+	case StFifteenMins:
 		return get15MinPrayerName(userInfo.PrayerCount)
-	case ThirtyMins:
+	case StThirtyMins:
 		return get30MinPrayerName(userInfo.PrayerCount)
-	case OneHour:
+	case StOneHour:
 		return get1hPrayerName(userInfo.PrayerCount)
 	default:
 		return ""

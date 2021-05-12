@@ -4,15 +4,18 @@ type UserInfo struct {
 	CurrentPrayer  string // the prayer user is reading currently
 	PrayerPart     int    // part of prayer being read
 	PrayerCount    int    // num of prayer
-	UserState      string //
+	UserState      State //
 	PrayersInState int
 }
 
+type State string
+
 const (
-	FiveMins    = "5min"
-	FifteenMins = "15min"
-	ThirtyMins  = "30min"
-	OneHour     = "1h"
+	StEmpty     State = "empty"
+	StFiveMins    State = "5min"
+	StFifteenMins State = "15min"
+	StThirtyMins  State = "30min"
+	StOneHour     State = "1h"
 )
 
 type UsersMap map[int]UserInfo
@@ -22,7 +25,7 @@ func (um *UsersMap) AddUser(userID int) {
 		CurrentPrayer:  "",
 		PrayerPart:     1,
 		PrayerCount:    1,
-		UserState:      "",
+		UserState:      StEmpty,
 		PrayersInState: 1,
 	}
 }
@@ -50,14 +53,14 @@ func (um *UsersMap) GetUserInfo(userID int) UserInfo {
 	return (*um)[userID]
 }
 
-func (um *UsersMap) UpdateState(userID int, state string) {
+func (um *UsersMap) UpdateState(userID int, state State) {
 	userInfo := (*um)[userID]
 	userInfo.UserState = state
 	var prayersInState int
 	switch state {
-	case FifteenMins, ThirtyMins:
+	case StFifteenMins, StThirtyMins:
 		prayersInState = 3
-	case OneHour:
+	case StOneHour:
 		prayersInState = 4
 	default:
 		prayersInState = 1
@@ -72,7 +75,7 @@ func (um *UsersMap) FlushUserInfo(userID int) {
 		CurrentPrayer:  "",
 		PrayerPart:     1,
 		PrayerCount:    1,
-		UserState:      "",
+		UserState:      StEmpty,
 		PrayersInState: 1,
 	}
 
