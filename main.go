@@ -29,40 +29,60 @@ func main() {
 		}
 		usersMap.FlushUserInfo(m.Sender.ID)
 
-		_, err = b.Send(m.Sender, helpers.GetText(helpers.IntroText), helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
+		msg, err := b.Send(m.Sender, helpers.GetText(helpers.IntroText), helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
 		}
+		usersMap.UpdateLastMsg(m.Sender.ID, msg)
 	})
 
 	b.Handle(&helpers.InlineBtnProceedStart, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
 		}
 
-		_, err = b.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML)
+		msg, err := b.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 	})
 
 	b.Handle(&helpers.InlineBtnLetsStart, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
 		}
 
-		_, err = b.Send(c.Sender, helpers.GetText(helpers.QuestionText), helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, helpers.GetText(helpers.QuestionText), helpers.MakeReplyMarkup(
 			helpers.InlineBtn5min, helpers.InlineBtn15min,
 			helpers.InlineBtn30min, helpers.InlineBtn1h), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 	})
 
 	b.Handle(&helpers.InlineBtn5min, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -79,16 +99,23 @@ func main() {
 			_, err = b.Send(c.Sender, icon)
 		}
 
-		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtn15min, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -105,16 +132,23 @@ func main() {
 			_, err = b.Send(c.Sender, icon)
 		}
 
-		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtn30min, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -131,16 +165,23 @@ func main() {
 			_, err = b.Send(c.Sender, icon)
 		}
 
-		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtn1h, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -157,16 +198,23 @@ func main() {
 			_, err = b.Send(c.Sender, icon)
 		}
 
-		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtnNextPrayer, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -183,33 +231,41 @@ func main() {
 			_, err = b.Send(c.Sender, icon)
 		}
 
-		_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+		msg, err := b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 			helpers.InlineBtnNextPart), tb.ModeHTML)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtnNextPart, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
 		}
 
+		var msg *tb.Message
 		text, isLastPart := helpers.GetPrayerPart(usersMap.GetUserInfo(c.Sender.ID))
 		if !isLastPart {
-			_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+			msg, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 				helpers.InlineBtnNextPart), tb.ModeHTML)
 		} else {
 			userInfo := usersMap.GetUserInfo(c.Sender.ID)
 			if userInfo.UserState == helpers.StFiveMins ||
 				userInfo.PrayerCount == userInfo.PrayersInState {
-				_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+				msg, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 					helpers.InlineBtnAmen), tb.ModeHTML)
 			} else {
-				_, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
+				msg, err = b.Send(c.Sender, text, helpers.MakeReplyMarkup(
 					helpers.InlineBtnNextPrayer), tb.ModeHTML)
 			}
 		}
@@ -217,10 +273,17 @@ func main() {
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 		usersMap.UpdatePrayerPart(c.Sender.ID)
 	})
 
 	b.Handle(&helpers.InlineBtnAmen, func(c *tb.Callback) {
+		_, err = b.EditReplyMarkup(usersMap.GetLastMsg(c.Sender.ID), nil)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
 		err = b.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
@@ -228,10 +291,12 @@ func main() {
 
 		usersMap.FlushUserInfo(c.Sender.ID)
 
-		_, err = b.Send(c.Sender, helpers.GetText(helpers.FinalText))
+		msg, err := b.Send(c.Sender, helpers.GetText(helpers.FinalText))
 		if err != nil {
 			log.Println(err.Error())
 		}
+
+		usersMap.UpdateLastMsg(c.Sender.ID, msg)
 	})
 
 	b.Start()

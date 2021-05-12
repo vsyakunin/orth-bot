@@ -1,17 +1,20 @@
 package helpers
 
+import tb "gopkg.in/tucnak/telebot.v2"
+
 type UserInfo struct {
 	CurrentPrayer  string // the prayer user is reading currently
 	PrayerPart     int    // part of prayer being read
 	PrayerCount    int    // num of prayer
-	UserState      State //
+	UserState      State  //
 	PrayersInState int
+	LastMsg        *tb.Message
 }
 
 type State string
 
 const (
-	StEmpty     State = "empty"
+	StEmpty       State = "empty"
 	StFiveMins    State = "5min"
 	StFifteenMins State = "15min"
 	StThirtyMins  State = "30min"
@@ -80,4 +83,15 @@ func (um *UsersMap) FlushUserInfo(userID int) {
 	}
 
 	(*um)[userID] = userInfo
+}
+
+func (um *UsersMap) UpdateLastMsg(userID int, msg *tb.Message) {
+	userInfo := (*um)[userID]
+	userInfo.LastMsg = msg
+	(*um)[userID] = userInfo
+}
+
+func (um *UsersMap) GetLastMsg(userID int) *tb.Message {
+	userInfo := (*um)[userID]
+	return userInfo.LastMsg
 }
