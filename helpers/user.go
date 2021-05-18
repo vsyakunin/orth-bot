@@ -1,14 +1,21 @@
 package helpers
 
-import tb "gopkg.in/tucnak/telebot.v2"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+
+	tb "gopkg.in/tucnak/telebot.v2"
+)
 
 type UserInfo struct {
-	CurrentPrayer  string // the prayer user is reading currently
-	PrayerPart     int    // part of prayer being read
-	PrayerCount    int    // num of prayer
-	UserState      State
-	PrayersInState int
-	LastMsg        *tb.Message
+	CurrentPrayer  string      `json:"current_prayer"` // the prayer user is reading currently
+	PrayerPart     int         `json:"prayer_part"`    // part of prayer being read
+	PrayerCount    int         `json:"prayer_count"`   // num of prayer
+	UserState      State       `json:"user_state"`
+	PrayersInState int         `json:"prayers_in_state"`
+	LastMsg        *tb.Message `json:"last_message"`
 }
 
 type State string
@@ -19,79 +26,79 @@ const (
 	StFifteenMins State = "15min"
 	StThirtyMins  State = "30min"
 	StOneHour     State = "1h"
+
+	fileNameRaw = "users/%d.json"
 )
 
-type UsersMap map[int]UserInfo
-
-func (um *UsersMap) AddUser(userID int) {
-	(*um)[userID] = UserInfo{
-		CurrentPrayer:  "",
-		PrayerPart:     1,
-		PrayerCount:    1,
-		UserState:      StEmpty,
-		PrayersInState: 1,
-	}
+var InitialUserInfo = UserInfo{
+	CurrentPrayer:  "",
+	PrayerPart:     1,
+	PrayerCount:    1,
+	UserState:      StEmpty,
+	PrayersInState: 1,
 }
 
-func (um *UsersMap) UpdatePrayer(userID int) {
-	userInfo := (*um)[userID]
-	userInfo.CurrentPrayer = getPrayerName(userInfo)
-	(*um)[userID] = userInfo
-}
-
-func (um *UsersMap) UpdatePrayerPart(userID int) {
-	userInfo := (*um)[userID]
-	userInfo.PrayerPart++
-	(*um)[userID] = userInfo
-}
-
-func (um *UsersMap) UpdatePrayerCount(userID int) {
-	userInfo := (*um)[userID]
-	userInfo.PrayerCount++
-	userInfo.PrayerPart = 1
-	(*um)[userID] = userInfo
-}
-
-func (um *UsersMap) GetUserInfo(userID int) UserInfo {
-	return (*um)[userID]
-}
-
-func (um *UsersMap) UpdateState(userID int, state State) {
-	userInfo := (*um)[userID]
-	userInfo.UserState = state
-	var prayersInState int
+func GetPrayersInState(state State) int {
 	switch state {
 	case StFifteenMins, StThirtyMins:
-		prayersInState = 3
+		return 3
 	case StOneHour:
-		prayersInState = 4
+		return 4
 	default:
-		prayersInState = 1
+		return 1
 	}
-	userInfo.PrayersInState = prayersInState
-	(*um)[userID] = userInfo
 }
 
-func (um *UsersMap) FlushUserInfo(userID int) {
-	userInfo := (*um)[userID]
-	userInfo = UserInfo{
-		CurrentPrayer:  "",
-		PrayerPart:     1,
-		PrayerCount:    1,
-		UserState:      StEmpty,
-		PrayersInState: 1,
+
+func createInitialUserInfo(userID int) (userInfo UserInfo, err error) {
+	fileName := fmt.Sprintf(fileNameRaw, userID)
+
+	userInfo = InitialUserInfo
+
+	file, err := json.MarshalIndent(userInfo, "", " ")
+	if err != nil {
+		return
 	}
 
-	(*um)[userID] = userInfo
+	err = ioutil.WriteFile(fileName, file, 0644)
+	if err != nil {
+		return
+	}
+
+	log.Printf("added new user with ID %v", userID)
+	return
 }
 
-func (um *UsersMap) UpdateLastMsg(userID int, msg *tb.Message) {
-	userInfo := (*um)[userID]
-	userInfo.LastMsg = msg
-	(*um)[userID] = userInfo
+func GetUserInfo(userID int) (userInfo UserInfo, err error) {
+	fileName := fmt.Sprintf(fileNameRaw, userID)
+
+	file, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return createInitialUserInfo(userID)
+	}
+
+	err = json.Unmarshal(file, &userInfo)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
-func (um *UsersMap) GetLastMsg(userID int) *tb.Message {
-	userInfo := (*um)[userID]
-	return userInfo.LastMsg
+func UpdateUserInfo(userID int, userInfo UserInfo) error {
+	fileName := fmt.Sprintf(fileNameRaw, userID)
+
+	file, err := json.MarshalIndent(userInfo, "", " ")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(fileName, file, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
+
+

@@ -67,7 +67,7 @@ func get1hPrayerName(prayerCount int) string {
 	}
 }
 
-func getPrayerName(userInfo UserInfo) string {
+func GetPrayerName(userInfo UserInfo) string {
 	switch userInfo.UserState {
 	case StFiveMins:
 		return get5MinPrayerName()

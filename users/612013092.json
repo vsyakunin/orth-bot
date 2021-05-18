@@ -1,0 +1,80 @@
+{
+ "current_prayer": "",
+ "prayer_part": 1,
+ "prayer_count": 1,
+ "user_state": "empty",
+ "prayers_in_state": 1,
+ "last_message": {
+  "message_id": 2451,
+  "from": {
+   "id": 1763071856,
+   "first_name": "orthBot",
+   "last_name": "",
+   "username": "orthodox_easter_bot",
+   "language_code": "",
+   "is_bot": true,
+   "can_join_groups": false,
+   "can_read_all_group_messages": false,
+   "supports_inline_queries": false
+  },
+  "date": 1621368586,
+  "chat": {
+   "id": 612013092,
+   "type": "private",
+   "title": "",
+   "first_name": "Vsevolod",
+   "last_name": "Yakunin",
+   "username": "mr_dubbel_margarita"
+  },
+  "forward_from": null,
+  "forward_from_chat": null,
+  "forward_from_message_id": 0,
+  "forward_signature": "",
+  "forward_sender_name": "",
+  "forward_date": 0,
+  "reply_to_message": null,
+  "via_bot": null,
+  "edit_date": 0,
+  "media_group_id": "",
+  "author_signature": "",
+  "text": "Господи, прости!\n\nТы столкнулся с проблемой зависимости от порнографии? Твоё сердце разъедает чувство вины за совершённое блудодеяние, гложет совесть?\n\nЭтот чат-бот подскажет тебе, как правильно обратиться к Господу, чтобы он помог отпустить этот грех.",
+  "audio": null,
+  "document": null,
+  "photo": null,
+  "sticker": null,
+  "voice": null,
+  "video_note": null,
+  "video": null,
+  "animation": null,
+  "contact": null,
+  "location": null,
+  "venue": null,
+  "poll": null,
+  "dice": null,
+  "new_chat_member": null,
+  "left_chat_member": null,
+  "new_chat_title": "",
+  "new_chat_photo": null,
+  "new_chat_members": null,
+  "delete_chat_photo": false,
+  "group_chat_created": false,
+  "supergroup_chat_created": false,
+  "channel_chat_created": false,
+  "migrate_to_chat_id": 0,
+  "migrate_from_chat_id": 0,
+  "pinned_message": null,
+  "invoice": null,
+  "successful_payment": null,
+  "reply_markup": {
+   "inline_keyboard": [
+    [
+     {
+      "text": "Дальше",
+      "callback_data": "\u000cproceedStart",
+      "switch_inline_query_current_chat": ""
+     }
+    ]
+   ]
+  }
+ }
+}
