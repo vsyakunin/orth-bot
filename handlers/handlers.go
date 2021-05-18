@@ -88,6 +88,7 @@ func (h MessageHandler) ProceedStartHandler() func(c *tb.Callback) {
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			return
 		}
 
 		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML)
@@ -162,6 +163,7 @@ func (h MessageHandler) PrayerHandler(handlerState helpers.State) func(c *tb.Cal
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			return
 		}
 
 		userInfo.UserState = handlerState
@@ -211,6 +213,7 @@ func (h MessageHandler) NextPrayerHandler() func(c *tb.Callback) {
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			return
 		}
 
 		userInfo.PrayerCount++
@@ -260,6 +263,7 @@ func (h MessageHandler) NextPartHandler() func(c *tb.Callback) {
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			return
 		}
 
 		var msg *tb.Message
