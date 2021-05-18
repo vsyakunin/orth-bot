@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"github.com/vsyakunin/orth-bot/helpers"
@@ -16,7 +15,8 @@ type MessageHandler struct {
 
 func newMessageHandler() *MessageHandler {
 	bot, err := tb.NewBot(tb.Settings{
-		Token: os.Getenv("TOKEN"),
+		Token: "1763071856:AAHenM8dfMQeIHaTPO5ZizbOTN3cf_zumQk",
+		//Token: os.Getenv("TOKEN"),
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 

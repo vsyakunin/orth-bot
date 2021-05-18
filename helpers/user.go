@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 
 	tb "gopkg.in/tucnak/telebot.v2"
 )
@@ -27,7 +29,8 @@ const (
 	StThirtyMins  State = "30min"
 	StOneHour     State = "1h"
 
-	fileNameRaw = "users/%d.json"
+	folderName  = "users"
+	fileNameRaw = "%s/%d.json"
 )
 
 var InitialUserInfo = UserInfo{
@@ -51,7 +54,10 @@ func GetPrayersInState(state State) int {
 
 
 func createInitialUserInfo(userID int) (userInfo UserInfo, err error) {
-	fileName := fmt.Sprintf(fileNameRaw, userID)
+	newpath := filepath.Join(".", "users")
+	os.MkdirAll(newpath, os.ModePerm)
+
+	fileName := fmt.Sprintf(fileNameRaw, folderName, userID)
 
 	userInfo = InitialUserInfo
 
@@ -70,7 +76,7 @@ func createInitialUserInfo(userID int) (userInfo UserInfo, err error) {
 }
 
 func GetUserInfo(userID int) (userInfo UserInfo, err error) {
-	fileName := fmt.Sprintf(fileNameRaw, userID)
+	fileName := fmt.Sprintf(fileNameRaw, folderName, userID)
 
 	file, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -86,7 +92,7 @@ func GetUserInfo(userID int) (userInfo UserInfo, err error) {
 }
 
 func UpdateUserInfo(userID int, userInfo UserInfo) error {
-	fileName := fmt.Sprintf(fileNameRaw, userID)
+	fileName := fmt.Sprintf(fileNameRaw, folderName, userID)
 
 	file, err := json.MarshalIndent(userInfo, "", " ")
 	if err != nil {
