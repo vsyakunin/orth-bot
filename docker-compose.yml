@@ -5,3 +5,5 @@ services:
     container_name: orth-bot
     build: .
     env_file: .env
+    volumes:
+      - "/users"
