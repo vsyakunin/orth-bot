@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -12,6 +13,7 @@ type Prayer map[int]string
 func getPrayerByName(prayerName string) (Prayer, error) {
 	jsonFile, err := os.Open("prayers.json")
 	if err != nil {
+		log.Println(err.Error())
 		return nil, err
 	}
 	defer jsonFile.Close()

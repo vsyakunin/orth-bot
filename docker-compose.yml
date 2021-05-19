@@ -2,8 +2,6 @@ version: "3.4"
 
 services:
   backend:
-    container_name: orthodox-bot
-    build:
-      context: ../
-      dockerfile: ../Dockerfile
+    container_name: orth-bot
+    build: .
     env_file: .env

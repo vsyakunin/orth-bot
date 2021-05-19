@@ -1,7 +1,16 @@
-FROM golang:1.14
+FROM golang:alpine AS builder
 
-WORKDIR /app
+ENV CGO_ENABLED=0
 
-ADD ./go.mod ./go.sum ./
+WORKDIR /build
+COPY . .
+RUN go build -o main .
 
-CMD go mod download
+FROM scratch
+
+COPY --from=builder etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /build/main /
+COPY --from=builder /build/prayers.json /
+COPY --from=builder /build/icons /icons
+
+ENTRYPOINT ["./main"]

@@ -16,7 +16,7 @@ type MessageHandler struct {
 
 func newMessageHandler() *MessageHandler {
 	bot, err := tb.NewBot(tb.Settings{
-		Token: os.Getenv("TOKEN"),
+		Token:  os.Getenv("TOKEN"),
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 
