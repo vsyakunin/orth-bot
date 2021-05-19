@@ -16,7 +16,7 @@ type MessageHandler struct {
 
 func newMessageHandler() *MessageHandler {
 	bot, err := tb.NewBot(tb.Settings{
-		Token:  os.Getenv("TOKEN"),
+		Token: os.Getenv("TOKEN"),
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 
@@ -91,7 +91,7 @@ func (h MessageHandler) ProceedStartHandler() func(c *tb.Callback) {
 			return
 		}
 
-		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML)
+		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML, tb.NoPreview)
 		if err != nil {
 			log.Println(err.Error())
 			return
