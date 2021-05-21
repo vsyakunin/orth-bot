@@ -51,12 +51,14 @@ func (h MessageHandler) IntroHandler() func(*tb.Message) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		msg, err := h.Bot.Send(m.Sender, helpers.GetText(helpers.IntroText), helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -65,6 +67,7 @@ func (h MessageHandler) IntroHandler() func(*tb.Message) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -76,24 +79,28 @@ func (h MessageHandler) ProceedStartHandler() func(c *tb.Callback) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.StartText), helpers.MakeReplyMarkup(helpers.InlineBtnLetsStart), tb.ModeHTML, tb.NoPreview)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -101,6 +108,7 @@ func (h MessageHandler) ProceedStartHandler() func(c *tb.Callback) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -112,6 +120,7 @@ func (h MessageHandler) LetsStartHandler() func(c *tb.Callback) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -124,6 +133,7 @@ func (h MessageHandler) LetsStartHandler() func(c *tb.Callback) {
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -133,6 +143,7 @@ func (h MessageHandler) LetsStartHandler() func(c *tb.Callback) {
 
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -140,6 +151,7 @@ func (h MessageHandler) LetsStartHandler() func(c *tb.Callback) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -151,18 +163,21 @@ func (h MessageHandler) PrayerHandler(handlerState helpers.State) func(c *tb.Cal
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -181,6 +196,7 @@ func (h MessageHandler) PrayerHandler(handlerState helpers.State) func(c *tb.Cal
 
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -190,6 +206,7 @@ func (h MessageHandler) PrayerHandler(handlerState helpers.State) func(c *tb.Cal
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -201,18 +218,21 @@ func (h MessageHandler) NextPrayerHandler() func(c *tb.Callback) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -231,6 +251,7 @@ func (h MessageHandler) NextPrayerHandler() func(c *tb.Callback) {
 
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -240,6 +261,7 @@ func (h MessageHandler) NextPrayerHandler() func(c *tb.Callback) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -251,18 +273,21 @@ func (h MessageHandler) NextPartHandler() func(c *tb.Callback) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -284,6 +309,7 @@ func (h MessageHandler) NextPartHandler() func(c *tb.Callback) {
 
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
@@ -293,6 +319,7 @@ func (h MessageHandler) NextPartHandler() func(c *tb.Callback) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -304,18 +331,22 @@ func (h MessageHandler) AmenHandler() func(c *tb.Callback) {
 		userInfo, err := helpers.GetUserInfo(userID)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 
 		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
 		}
 
 		userInfo = helpers.InitialUserInfo
@@ -323,6 +354,8 @@ func (h MessageHandler) AmenHandler() func(c *tb.Callback) {
 		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.FinalText))
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
 		}
 
 		userInfo.LastMsg = msg
@@ -330,6 +363,7 @@ func (h MessageHandler) AmenHandler() func(c *tb.Callback) {
 		err = helpers.UpdateUserInfo(userID, userInfo)
 		if err != nil {
 			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}

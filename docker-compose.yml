@@ -6,4 +6,4 @@ services:
     build: .
     env_file: .env
     volumes:
-      - "/users"
+      - ./users:/users

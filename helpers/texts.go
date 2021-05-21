@@ -1,6 +1,7 @@
 package helpers
 
 const (
+	ErrorText    = "error_text"
 	IntroText    = "intro_text"
 	StartText    = "start_text"
 	QuestionText = "question_text"
