@@ -47,6 +47,11 @@ var (
 		Unique: "amen",
 		Text:   "Аминь",
 	}
+
+	InlineBtnStartOver = tb.InlineButton{
+		Unique: "startOver",
+		Text:   "Начать заново",
+	}
 )
 
 func getKeysForButtons(buttons ...tb.InlineButton) (ret [][]tb.InlineButton) {

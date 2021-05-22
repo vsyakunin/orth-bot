@@ -32,7 +32,7 @@ func newMessageHandler() *MessageHandler {
 func StartHandling() {
 	h := newMessageHandler()
 
-	h.Bot.Handle(tb.OnText, h.IntroHandler())
+	h.Bot.Handle("/start", h.IntroHandler())
 	h.Bot.Handle(&helpers.InlineBtnProceedStart, h.ProceedStartHandler())
 	h.Bot.Handle(&helpers.InlineBtnLetsStart, h.LetsStartHandler())
 	h.Bot.Handle(&helpers.InlineBtn5min, h.PrayerHandler(helpers.StFiveMins))
@@ -42,6 +42,7 @@ func StartHandling() {
 	h.Bot.Handle(&helpers.InlineBtnNextPrayer, h.NextPrayerHandler())
 	h.Bot.Handle(&helpers.InlineBtnNextPart, h.NextPartHandler())
 	h.Bot.Handle(&helpers.InlineBtnAmen, h.AmenHandler())
+	h.Bot.Handle(&helpers.InlineBtnStartOver, h.IntroCallbackHandler())
 	h.Bot.Start()
 }
 
@@ -68,6 +69,48 @@ func (h MessageHandler) IntroHandler() func(*tb.Message) {
 		if err != nil {
 			log.Println(err.Error())
 			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+	}
+}
+
+func (h MessageHandler) IntroCallbackHandler() func(c *tb.Callback) {
+	return func(c *tb.Callback) {
+		userID := c.Sender.ID
+		userInfo, err := helpers.GetUserInfo(userID)
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		_, err = h.Bot.EditReplyMarkup(userInfo.LastMsg, nil)
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		err = h.Bot.Respond(c, &tb.CallbackResponse{ShowAlert: false})
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.IntroText), helpers.MakeReplyMarkup(helpers.InlineBtnProceedStart), tb.ModeHTML)
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		userInfo = helpers.InitialUserInfo
+		userInfo.LastMsg = msg
+		err = helpers.UpdateUserInfo(userID, userInfo)
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
 	}
@@ -351,7 +394,8 @@ func (h MessageHandler) AmenHandler() func(c *tb.Callback) {
 
 		userInfo = helpers.InitialUserInfo
 
-		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.FinalText))
+		msg, err := h.Bot.Send(c.Sender, helpers.GetText(helpers.FinalText), helpers.MakeReplyMarkup(
+			helpers.InlineBtnStartOver), tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
 			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
