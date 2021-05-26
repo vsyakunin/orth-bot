@@ -52,9 +52,17 @@ func GetPrayersInState(state State) int {
 	}
 }
 
+func GetTotalNumOfUsers() (int, error) {
+	dirPath := filepath.Join(".", folderName)
+	d, err := os.ReadDir(dirPath)
+	if err != nil {
+		return 0, err
+	}
+	return len(d), nil
+}
 
 func createInitialUserInfo(userID int) (userInfo UserInfo, err error) {
-	newpath := filepath.Join(".", "users")
+	newpath := filepath.Join(".", folderName)
 	os.MkdirAll(newpath, os.ModePerm)
 
 	fileName := fmt.Sprintf(fileNameRaw, folderName, userID)

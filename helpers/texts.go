@@ -6,6 +6,7 @@ const (
 	StartText    = "start_text"
 	QuestionText = "question_text"
 	FinalText    = "final_text"
+	StatsText    = "stats_text"
 )
 
 func GetText(textName string) (text string) {

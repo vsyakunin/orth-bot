@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -33,6 +34,7 @@ func StartHandling() {
 	h := newMessageHandler()
 
 	h.Bot.Handle("/start", h.IntroHandler())
+	h.Bot.Handle("/getstats", h.StatsHandler())
 	h.Bot.Handle(&helpers.InlineBtnProceedStart, h.ProceedStartHandler())
 	h.Bot.Handle(&helpers.InlineBtnLetsStart, h.LetsStartHandler())
 	h.Bot.Handle(&helpers.InlineBtn5min, h.PrayerHandler(helpers.StFiveMins))
@@ -66,6 +68,26 @@ func (h MessageHandler) IntroHandler() func(*tb.Message) {
 		userInfo = helpers.InitialUserInfo
 		userInfo.LastMsg = msg
 		err = helpers.UpdateUserInfo(userID, userInfo)
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+	}
+}
+
+func (h MessageHandler) StatsHandler() func(*tb.Message) {
+	return func(m *tb.Message) {
+		numUsers, err := helpers.GetTotalNumOfUsers()
+		if err != nil {
+			log.Println(err.Error())
+			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		statsText := fmt.Sprintf(helpers.GetText(helpers.StatsText), numUsers)
+
+		_, err = h.Bot.Send(m.Sender, statsText, tb.ModeHTML)
 		if err != nil {
 			log.Println(err.Error())
 			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
