@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -78,14 +77,12 @@ func (h MessageHandler) IntroHandler() func(*tb.Message) {
 
 func (h MessageHandler) StatsHandler() func(*tb.Message) {
 	return func(m *tb.Message) {
-		numUsers, err := helpers.GetTotalNumOfUsers()
+		statsText, err := helpers.GetStatsText()
 		if err != nil {
 			log.Println(err.Error())
 			h.Bot.Send(m.Sender, helpers.GetText(helpers.ErrorText))
 			return
 		}
-
-		statsText := fmt.Sprintf(helpers.GetText(helpers.StatsText), numUsers)
 
 		_, err = h.Bot.Send(m.Sender, statsText, tb.ModeHTML)
 		if err != nil {
@@ -236,6 +233,12 @@ func (h MessageHandler) PrayerHandler(handlerState helpers.State) func(c *tb.Cal
 		if err != nil {
 			log.Println(err.Error())
 			h.Bot.Send(c.Sender, helpers.GetText(helpers.ErrorText))
+			return
+		}
+
+		err = helpers.UpdateStats(handlerState)
+		if err != nil {
+			log.Println(err.Error())
 			return
 		}
 

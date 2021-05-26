@@ -52,7 +52,7 @@ func GetPrayersInState(state State) int {
 	}
 }
 
-func GetTotalNumOfUsers() (int, error) {
+func getTotalNumOfUsers() (int, error) {
 	dirPath := filepath.Join(".", folderName)
 	d, err := os.ReadDir(dirPath)
 	if err != nil {

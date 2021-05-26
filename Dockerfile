@@ -12,5 +12,6 @@ COPY --from=builder etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /build/main /
 COPY --from=builder /build/prayers.json /
 COPY --from=builder /build/icons /icons
+COPY --from=builder /build/stats /stats
 
 ENTRYPOINT ["./main"]
